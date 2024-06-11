@@ -1,4 +1,3 @@
-pip install gensim
 import streamlit as st
 from gensim.models import KeyedVectors
 import numpy as np

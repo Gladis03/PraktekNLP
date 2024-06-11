@@ -35,9 +35,9 @@ def main():
     # Tampilkan riwayat percakapan
     for chat in st.session_state['conversation']:
         if chat['role'] == 'user':
-            st.write(f"**Anda:** {chat['text_input']}")
+            st.write(f"**Anda:** {chat['text']}")
         else:
-            st.write(f"**Bot:** {chat['text_input']}")
+            st.write(f"**Bot:** {chat['text']}")
 
     # Form untuk pemesanan tiket
     st.subheader("Formulir Pemesanan Tiket")

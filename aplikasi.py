@@ -35,7 +35,7 @@ def main():
     # Tampilkan riwayat percakapan
     for chat in st.session_state['conversation']:
         if chat['role'] == 'user':
-            st.write(f"**Anda:** {chat['text']}")
+            st.write(f"**Anda:** {chat['edis']}")
         else:
             st.write(f"**Bot:** {chat['text']}")
 

@@ -44,8 +44,8 @@ def main():
     with st.form(key='booking_form'):
         name = st.text_input("Nama Lengkap")
         email = st.text_input("Email")
-        origin = st.text_input("Kota Asal")
-        destination = st.text_input("Kota Tujuan")
+        origin = st.text_input("Berangkat dari")
+        destination = st.text_input("Tujuan ke")
         departure_date = st.date_input("Tanggal Keberangkatan", datetime.date.today())
         return_date = st.date_input("Tanggal Kembali", datetime.date.today())
         submit_button = st.form_submit_button(label='Pesan Tiket')

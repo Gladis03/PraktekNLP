@@ -1,45 +1,57 @@
 import streamlit as st
-from gensim.models import KeyedVectors
-import numpy as np
+import datetime
 
-# Memuat model word2vec pra-latih (contoh menggunakan model Google News)
-@st.cache(allow_output_mutation=True)
-def load_model():
-    model_path = 'GoogleNews-vectors-negative300.bin'  # Path ke model Word2Vec pra-latih
-    model = KeyedVectors.load_word2vec_format(model_path, binary=True)
-    return model
+# Fungsi untuk mengatur pesan chatbot
+def chatbot_response(user_input):
+    response = ""
+    if "halo" in user_input.lower() or "hai" in user_input.lower():
+        response = "Halo! Ada yang bisa saya bantu?"
+    elif "pesan tiket" in user_input.lower():
+        response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
+    elif "terima kasih" in user_input.lower():
+        response = "Sama-sama! Senang bisa membantu."
+    else:
+        response = "Maaf, saya tidak mengerti. Bisa Anda ulangi?"
 
-# Fungsi untuk mendapatkan embedding sebuah kata
-def get_word_embedding(word, model):
-    try:
-        embedding = model[word]
-        return embedding
-    except KeyError:
-        st.error(f"'{word}' tidak ditemukan dalam model.")
-        return None
+    return response
 
-# Fungsi untuk menghitung kesamaan kosinus antara dua vektor
-def cosine_similarity(vec1, vec2):
-    cos_sim = np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
-    return cos_sim
+# Fungsi utama aplikasi
+def main():
+    st.title("Chatbot Pemesanan Tiket Pesawat")
+    st.write("Selamat datang di layanan pemesanan tiket pesawat. Silakan bertanya untuk memulai!")
 
-st.title("Word Embeddings dengan Word2Vec")
+    # Simpan riwayat percakapan
+    if 'conversation' not in st.session_state:
+        st.session_state['conversation'] = []
 
-# Memuat model
-model = load_model()
+    user_input = st.text_input("Anda: ")
 
-# Input dari pengguna
-word1 = st.text_input("Masukkan kata pertama:", value="king")
-word2 = st.text_input("Masukkan kata kedua:", value="queen")
+    if st.button("Kirim"):
+        if user_input:
+            st.session_state['conversation'].append({"role": "user", "text": user_input})
+            response = chatbot_response(user_input)
+            st.session_state['conversation'].append({"role": "bot", "text": response})
 
-if word1 and word2:
-    embedding1 = get_word_embedding(word1, model)
-    embedding2 = get_word_embedding(word2, model)
+    # Tampilkan riwayat percakapan
+    for chat in st.session_state['conversation']:
+        if chat['role'] == 'user':
+            st.write(f"**Anda:** {chat['text']}")
+        else:
+            st.write(f"**Bot:** {chat['text']}")
 
-    if embedding1 is not None and embedding2 is not None:
-        similarity = cosine_similarity(embedding1, embedding2)
-        st.write(f"Kesamaan kosinus antara '{word1}' dan '{word2}': {similarity:.4f}")
+    # Form untuk pemesanan tiket
+    st.subheader("Formulir Pemesanan Tiket")
+    with st.form(key='booking_form'):
+        name = st.text_input("Nama Lengkap")
+        email = st.text_input("Email")
+        origin = st.text_input("Kota Asal")
+        destination = st.text_input("Kota Tujuan")
+        departure_date = st.date_input("Tanggal Keberangkatan", datetime.date.today())
+        return_date = st.date_input("Tanggal Kembali", datetime.date.today())
+        submit_button = st.form_submit_button(label='Pesan Tiket')
 
-        # Menampilkan vektor embedding (opsional)
-        st.write(f"Embedding untuk '{word1}':", embedding1)
-        st.write(f"Embedding untuk '{word2}':", embedding2)
+        if submit_button:
+            st.success(f"Tiket berhasil dipesan untuk {name} dari {origin} ke {destination} pada tanggal {departure_date}.")
+
+if __name__ == "__main__":
+    main()

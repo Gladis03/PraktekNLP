@@ -4,8 +4,10 @@ import datetime
 # Fungsi untuk mengatur pesan chatbot
 def chatbot_response(user_input):
     response = ""
+    options = []
     if "halo" in user_input.lower() or "hai" in user_input.lower():
         response = "Halo! Ada yang bisa saya bantu?"
+        options = ["Pesan tiket", "Lihat promo", "Bantuan lain"]
     elif "pesan tiket" in user_input.lower():
         response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
     elif "terima kasih" in user_input.lower():
@@ -13,7 +15,7 @@ def chatbot_response(user_input):
     else:
         response = "Maaf, saya tidak mengerti. Bisa Anda ulangi?"
 
-    return response
+    return response, options
 
 # Fungsi utama aplikasi
 def main():
@@ -29,8 +31,9 @@ def main():
     if st.button("Kirim"):
         if user_input:
             st.session_state['conversation'].append({"role": "user", "text": user_input})
-            response = chatbot_response(user_input)
+            response, options = chatbot_response(user_input)
             st.session_state['conversation'].append({"role": "bot", "text": response})
+            st.session_state['options'] = options
 
     # Tampilkan riwayat percakapan
     for chat in st.session_state['conversation']:
@@ -38,6 +41,15 @@ def main():
             st.write(f"**Anda:** {chat['text']}")
         else:
             st.write(f"**Bot:** {chat['text']}")
+
+    # Tampilkan opsi jika ada
+    if 'options' in st.session_state and st.session_state['options']:
+        option = st.radio("Pilih opsi:", st.session_state['options'])
+        if st.button("Pilih"):
+            st.session_state['conversation'].append({"role": "user", "text": option})
+            response, options = chatbot_response(option)
+            st.session_state['conversation'].append({"role": "bot", "text": response})
+            st.session_state['options'] = options
 
     # Form untuk pemesanan tiket
     st.subheader("Formulir Pemesanan Tiket")

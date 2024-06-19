@@ -2,38 +2,35 @@ import streamlit as st
 import datetime
 
 # Fungsi untuk mengatur pesan chatbot
-def chatbot_response(user_input):
+def chatbot_response(option):
     response = ""
-    options = []
-    if "halo" in user_input.lower() or "hai" in user_input.lower():
+    if option == "Halo" or option == "Hai":
         response = "Halo! Ada yang bisa saya bantu?"
-        options = ["Pesan tiket", "Lihat promo", "Bantuan lain"]
-    elif "pesan tiket" in user_input.lower():
+    elif option == "Pesan Tiket":
         response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
-    elif "terima kasih" in user_input.lower():
+    elif option == "Terima Kasih":
         response = "Sama-sama! Senang bisa membantu."
     else:
         response = "Maaf, saya tidak mengerti. Bisa Anda ulangi?"
 
-    return response, options
+    return response
 
 # Fungsi utama aplikasi
 def main():
     st.title("Chatbot Pemesanan Tiket Pesawat")
-    st.write("Selamat datang di layanan pemesanan tiket pesawat. Silakan bertanya untuk memulai!")
+    st.write("Selamat datang di layanan pemesanan tiket pesawat. Silakan pilih opsi untuk memulai!")
 
     # Simpan riwayat percakapan
     if 'conversation' not in st.session_state:
         st.session_state['conversation'] = []
 
-    user_input = st.text_input("Anda: ")
+    options = ["Halo", "Hai", "Pesan Tiket", "Terima Kasih", "Lainnya"]
+    option = st.selectbox("Pilih opsi:", options)
 
     if st.button("Kirim"):
-        if user_input:
-            st.session_state['conversation'].append({"role": "user", "text": user_input})
-            response, options = chatbot_response(user_input)
-            st.session_state['conversation'].append({"role": "bot", "text": response})
-            st.session_state['options'] = options
+        st.session_state['conversation'].append({"role": "user", "text": option})
+        response = chatbot_response(option)
+        st.session_state['conversation'].append({"role": "bot", "text": response})
 
     # Tampilkan riwayat percakapan
     for chat in st.session_state['conversation']:
@@ -42,28 +39,20 @@ def main():
         else:
             st.write(f"**Bot:** {chat['text']}")
 
-    # Tampilkan opsi jika ada
-    if 'options' in st.session_state and st.session_state['options']:
-        option = st.radio("Pilih opsi:", st.session_state['options'])
-        if st.button("Pilih"):
-            st.session_state['conversation'].append({"role": "user", "text": option})
-            response, options = chatbot_response(option)
-            st.session_state['conversation'].append({"role": "bot", "text": response})
-            st.session_state['options'] = options
-
     # Form untuk pemesanan tiket
-    st.subheader("Formulir Pemesanan Tiket")
-    with st.form(key='booking_form'):
-        name = st.text_input("Nama Lengkap")
-        email = st.text_input("Email")
-        origin = st.text_input("Berangkat dari")
-        destination = st.text_input("Tujuan ke")
-        departure_date = st.date_input("Tanggal Keberangkatan", datetime.date.today())
-        return_date = st.date_input("Tanggal Kembali", datetime.date.today())
-        submit_button = st.form_submit_button(label='Pesan Tiket')
+    if "Pesan Tiket" in [chat['text'] for chat in st.session_state['conversation']]:
+        st.subheader("Formulir Pemesanan Tiket")
+        with st.form(key='booking_form'):
+            name = st.text_input("Nama Lengkap")
+            email = st.text_input("Email")
+            origin = st.text_input("Berangkat dari")
+            destination = st.text_input("Tujuan ke")
+            departure_date = st.date_input("Tanggal Keberangkatan", datetime.date.today())
+            return_date = st.date_input("Tanggal Kembali", datetime.date.today())
+            submit_button = st.form_submit_button(label='Pesan Tiket')
 
-        if submit_button:
-            st.success(f"Tiket berhasil dipesan untuk {name} dari {origin} ke {destination} pada tanggal {departure_date}.")
+            if submit_button:
+                st.success(f"Tiket berhasil dipesan untuk {name} dari {origin} ke {destination} pada tanggal {departure_date}.")
 
 if __name__ == "__main__":
     main()

@@ -4,8 +4,8 @@ import datetime
 # Fungsi untuk mengatur pesan chatbot
 def chatbot_response(option):
     response = ""
-    if option == "Halo" or option == "Hai":
-        response = "Halo! Ada yang bisa saya bantu?"
+    if option == "Pesan Tiket  Kapal" or option == "Pesan Tiket Kereta" or option == "Pesan Tiket Pesawat":
+        response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
     elif option == "Pesan Tiket":
         response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
     elif option == "Terima Kasih":
@@ -17,14 +17,14 @@ def chatbot_response(option):
 
 # Fungsi utama aplikasi
 def main():
-    st.title("Chatbot Pemesanan Tiket Pesawat")
-    st.write("Selamat datang di layanan pemesanan tiket pesawat. Silakan pilih opsi untuk memulai!")
+    st.title("Chatbot Pemesanan Tiket")
+    st.write("Selamat datang di layanan pemesanan tiket. Silakan pilih opsi untuk memulai!")
 
     # Simpan riwayat percakapan
     if 'conversation' not in st.session_state:
         st.session_state['conversation'] = []
 
-    options = ["Halo", "Hai", "Pesan Tiket", "Terima Kasih", "Lainnya"]
+    options = ["Pesan Tiket Kapal", "Pesan Tiket Kereta", "Pesan Tiket Pesawat"]
     option = st.selectbox("Pilih opsi:", options)
 
     if st.button("Kirim"):

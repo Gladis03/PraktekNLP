@@ -4,10 +4,8 @@ import datetime
 # Fungsi untuk mengatur pesan chatbot
 def chatbot_response(option):
     response = ""
-    if option == "Pesan Tiket  Kapal" or option == "Pesan Tiket Kereta" or option == "Pesan Tiket Pesawat":
-        response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
-    elif option == "Pesan Tiket":
-        response = "Tentu! Untuk memesan tiket, silakan masukkan detail penerbangan Anda."
+    if option in ["Pesan Tiket Kapal", "Pesan Tiket Kereta", "Pesan Tiket Pesawat"]:
+        response = f"Tentu! Untuk memesan {option.lower()}, silakan masukkan detail perjalanan Anda."
     elif option == "Terima Kasih":
         response = "Sama-sama! Senang bisa membantu."
     else:
@@ -40,7 +38,7 @@ def main():
             st.write(f"**Bot:** {chat['text']}")
 
     # Form untuk pemesanan tiket
-    if "Pesan Tiket" in [chat['text'] for chat in st.session_state['conversation']]:
+    if any(option in chat['text'] for chat in st.session_state['conversation']):
         st.subheader("Formulir Pemesanan Tiket")
         with st.form(key='booking_form'):
             name = st.text_input("Nama Lengkap")
